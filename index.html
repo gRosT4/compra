@@ -5,111 +5,110 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#0f172a" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>Llista Compra</title>
+  <title>Compra</title>
   <link rel="manifest" href="manifest.json" />
   <style>
     :root {
       --bg: #0f172a;
       --surface: #1e293b;
-      --surface-hover: #283548;
       --border: #334155;
       --text: #f8fafc;
       --text-muted: #94a3b8;
       --primary: #10b981;
-      --primary-dark: #059669;
-      --dte-bg: rgba(245, 158, 11, 0.18);
+      --dte-bg: rgba(245, 158, 11, 0.2);
       --dte-text: #fbbf24;
-      --dte-border: rgba(245, 158, 11, 0.45);
       --danger: #ef4444;
     }
 
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
       color: var(--text);
-      padding-bottom: 84px;
+      padding-bottom: 76px;
       user-select: none;
     }
 
-    /* Header */
     header {
       position: sticky;
       top: 0;
       z-index: 30;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px 10px;
+      padding: 10px 14px;
     }
 
-    .header-top {
+    .top-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       margin-bottom: 10px;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 1.25rem;
+    /* Segmented control per canviar de vista dalt */
+    .mode-switch {
+      display: flex;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      flex: 1;
+    }
+
+    .mode-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
       font-weight: 700;
+      font-size: 0.88rem;
+      padding: 7px 8px;
+      border-radius: 7px;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      gap: 6px;
     }
 
-    .badge-count {
+    .mode-btn.active {
       background: var(--primary);
       color: #022c22;
-      font-size: 0.78rem;
-      font-weight: 800;
-      padding: 2px 8px;
+    }
+
+    .count-pill {
+      background: rgba(0, 0, 0, 0.22);
+      padding: 1px 7px;
       border-radius: 999px;
+      font-size: 0.78rem;
     }
 
-    .header-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .icon-btn {
+    .refresh-btn {
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text);
       border-radius: 10px;
-      padding: 7px 11px;
-      font-size: 0.9rem;
+      width: 38px;
+      height: 38px;
+      font-size: 1rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 5px;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    .icon-btn:active {
-      transform: scale(0.96);
-    }
+    .spinning { animation: spin 0.8s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
 
-    .spinning {
-      animation: spin 0.9s linear infinite;
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Filter chips */
     .filters-bar {
       display: flex;
       gap: 6px;
       overflow-x: auto;
-      padding-bottom: 4px;
       scrollbar-width: none;
     }
     .filters-bar::-webkit-scrollbar { display: none; }
@@ -121,28 +120,25 @@
       padding: 5px 11px;
       border-radius: 999px;
       font-size: 0.8rem;
-      font-weight: 600;
+      font-weight: 700;
       white-space: nowrap;
       cursor: pointer;
     }
 
     .chip.active {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #022c22;
+      background: #e2e8f0;
+      border-color: #e2e8f0;
+      color: #0f172a;
     }
 
-    .chip.dte-filter.active {
+    .chip.dte-chip.active {
       background: #f59e0b;
       border-color: #f59e0b;
       color: #1e1b04;
     }
 
-    /* Search bar (Catalog view) */
-    .search-box {
-      padding: 10px 16px 0;
-      display: flex;
-      gap: 8px;
+    .search-wrap {
+      margin-top: 10px;
     }
 
     .search-input {
@@ -151,56 +147,46 @@
       border: 1px solid var(--border);
       color: var(--text);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 9px 12px;
       font-size: 0.95rem;
       outline: none;
     }
+    .search-input:focus { border-color: var(--primary); }
 
-    .search-input:focus {
-      border-color: var(--primary);
-    }
-
-    /* Main content */
     main {
-      padding: 10px 14px;
-      max-width: 680px;
+      padding: 10px 12px;
+      max-width: 640px;
       margin: 0 auto;
     }
 
-    .category-group {
-      margin-bottom: 18px;
-    }
-
-    .category-title {
-      font-size: 0.78rem;
+    .section-label {
+      font-size: 0.72rem;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       color: var(--text-muted);
       font-weight: 700;
-      margin: 0 0 8px 4px;
-      display: flex;
-      justify-content: space-between;
+      margin: 14px 4px 6px;
     }
+    .section-label:first-child { margin-top: 2px; }
 
-    .item-card {
+    .row {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 11px;
       padding: 10px 12px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
-      transition: background 0.15s, opacity 0.15s;
+      gap: 8px;
     }
 
-    .item-card.in-cart {
-      border-color: rgba(16, 185, 129, 0.45);
-      background: rgba(16, 185, 129, 0.08);
+    .row.selected {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(16, 185, 129, 0.1);
     }
 
-    .item-left {
+    .row-main {
       display: flex;
       align-items: center;
       gap: 11px;
@@ -209,417 +195,259 @@
       cursor: pointer;
     }
 
-    .check-circle {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
+    .checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
       border: 2px solid var(--text-muted);
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
       font-size: 0.85rem;
-      font-weight: 800;
+      font-weight: 900;
       color: #022c22;
     }
 
-    .item-card.checked-style .check-circle {
+    .row.selected .checkbox {
       background: var(--primary);
       border-color: var(--primary);
     }
 
-    .item-info {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .item-name {
+    .row-title {
       font-size: 0.96rem;
       font-weight: 500;
-      color: var(--text);
       word-break: break-word;
     }
 
-    .item-tags {
-      display: flex;
-      flex-wrap: wrap;
+    .badges {
+      display: inline-flex;
+      align-items: center;
       gap: 5px;
-      margin-top: 4px;
+      margin-left: 6px;
+      vertical-align: middle;
     }
 
-    .tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 1px 7px;
-      border-radius: 6px;
-      letter-spacing: 0.02em;
+    .badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 5px;
     }
 
-    /* Supermarket colors */
-    .sup-Mer { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-    .sup-BA { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+    .sup-Mer { background: rgba(16, 185, 129, 0.22); color: #34d399; }
+    .sup-BA { background: rgba(239, 68, 68, 0.22); color: #f87171; }
     .sup-Plus { background: rgba(249, 115, 22, 0.22); color: #fb923c; }
     .sup-Al { background: rgba(59, 130, 246, 0.22); color: #60a5fa; }
     .sup-Li { background: rgba(234, 179, 8, 0.22); color: #fde047; }
     .sup-Esc { background: rgba(168, 85, 247, 0.22); color: #c084fc; }
+    .badge-dte { background: var(--dte-bg); color: var(--dte-text); }
 
-    .tag-dte {
-      background: var(--dte-bg);
-      color: var(--dte-text);
-      border: 1px solid var(--dte-border);
-    }
-
-    .item-right {
+    .row-actions {
       display: flex;
       align-items: center;
       gap: 6px;
       flex-shrink: 0;
     }
 
-    .qty-box {
+    .qty-pill {
       display: flex;
       align-items: center;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      overflow: hidden;
     }
 
-    .qty-btn {
-      background: transparent;
+    .qty-pill button {
+      background: none;
       border: none;
       color: var(--text);
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       font-size: 1rem;
       font-weight: 700;
       cursor: pointer;
     }
 
-    .qty-btn:active {
-      background: var(--surface-hover);
-    }
-
-    .qty-val {
-      min-width: 20px;
+    .qty-pill span {
+      min-width: 18px;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 700;
     }
 
-    .edit-btn {
-      background: transparent;
+    .edit-icon {
+      background: none;
       border: none;
       color: var(--text-muted);
-      padding: 6px;
-      font-size: 1rem;
+      padding: 4px 6px;
+      font-size: 0.95rem;
       cursor: pointer;
     }
 
-    /* Empty state */
-    .empty-state {
+    .empty {
       text-align: center;
-      padding: 48px 20px;
+      padding: 44px 16px;
       color: var(--text-muted);
     }
 
-    .empty-state p {
-      margin: 8px 0 16px;
-      font-size: 0.95rem;
-    }
-
-    /* Floating Action Button */
     .fab {
       position: fixed;
       right: 18px;
-      bottom: 76px;
+      bottom: 20px;
       width: 54px;
       height: 54px;
       border-radius: 50%;
       background: var(--primary);
       color: #022c22;
       border: none;
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       font-weight: 700;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
       cursor: pointer;
       z-index: 25;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .fab:active {
-      transform: scale(0.94);
-    }
-
-    /* Bottom Navigation */
-    nav.bottom-nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 62px;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      display: flex;
-      z-index: 30;
-    }
-
-    .nav-btn {
-      flex: 1;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      font-weight: 600;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      cursor: pointer;
-    }
-
-    .nav-btn.active {
-      color: var(--primary);
-    }
-
-    .nav-icon {
-      font-size: 1.2rem;
     }
 
     /* Modal */
-    .modal-backdrop {
+    .modal-bg {
       position: fixed;
       inset: 0;
-      background: rgba(2, 6, 23, 0.78);
+      background: rgba(2, 6, 23, 0.8);
       display: none;
       align-items: flex-end;
       justify-content: center;
       z-index: 50;
     }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
+    .modal-bg.open { display: flex; }
 
     .modal {
       background: var(--surface);
       border-top: 1px solid var(--border);
       border-radius: 18px 18px 0 0;
       width: 100%;
-      max-width: 540px;
-      padding: 20px 18px 26px;
-      animation: slideUp 0.2s ease-out;
+      max-width: 520px;
+      padding: 18px 16px 24px;
     }
 
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
-    }
+    .modal h2 { margin: 0 0 12px; font-size: 1.05rem; }
 
-    .modal h2 {
-      margin: 0 0 14px;
-      font-size: 1.1rem;
-    }
-
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-bottom: 5px;
-      font-weight: 600;
-    }
-
-    .form-control {
+    .field { margin-bottom: 11px; }
+    .field label { display: block; font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; font-weight: 600; }
+    .input, .select {
       width: 100%;
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
-      border-radius: 10px;
-      padding: 10px 12px;
+      border-radius: 9px;
+      padding: 9px 11px;
       font-size: 0.95rem;
       outline: none;
     }
 
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 
-    .toggle-row {
+    .check-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
       background: var(--bg);
       border: 1px solid var(--border);
-      padding: 10px 12px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      cursor: pointer;
+      padding: 9px 12px;
+      border-radius: 9px;
+      margin-bottom: 10px;
+      font-size: 0.9rem;
     }
+    .check-row input { width: 19px; height: 19px; accent-color: var(--primary); }
 
-    .toggle-row input[type="checkbox"] {
-      width: 20px;
-      height: 20px;
-      accent-color: var(--primary);
-    }
-
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-
+    .modal-btns { display: flex; gap: 8px; margin-top: 14px; }
     .btn {
       flex: 1;
       padding: 11px;
-      border-radius: 10px;
+      border-radius: 9px;
       border: none;
-      font-size: 0.95rem;
       font-weight: 700;
+      font-size: 0.92rem;
       cursor: pointer;
     }
+    .btn-save { background: var(--primary); color: #022c22; }
+    .btn-cancel { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-del { background: rgba(239, 68, 68, 0.18); color: var(--danger); flex: 0.45; }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #022c22;
-    }
-
-    .btn-secondary {
-      background: var(--bg);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-danger {
-      background: rgba(239, 68, 68, 0.16);
-      color: var(--danger);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      flex: 0.45;
-    }
-
-    /* Toast */
     .toast {
       position: fixed;
-      top: 14px;
+      bottom: 84px;
       left: 50%;
       transform: translateX(-50%);
       background: #1e293b;
       border: 1px solid var(--primary);
       color: var(--text);
-      padding: 8px 16px;
+      padding: 7px 15px;
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       z-index: 100;
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
     }
-
-    .toast.show {
-      opacity: 1;
-    }
+    .toast.show { opacity: 1; }
   </style>
 </head>
 <body>
 
-  <div id="toast" class="toast">Sincronitzant...</div>
+  <div id="toast" class="toast"></div>
 
   <header>
-    <div class="header-top">
-      <h1>
-        <span id="header-title">🛒 A comprar</span>
-        <span id="pending-badge" class="badge-count">0</span>
-      </h1>
-      <div class="header-actions">
-        <button class="icon-btn" onclick="loadData(true)" title="Actualitzar llista">
-          <span id="refresh-icon">🔄</span>
+    <div class="top-bar">
+      <div class="mode-switch">
+        <button class="mode-btn active" id="btn-mode-buy" onclick="setMode('buy')">
+          🛒 A comprar <span class="count-pill" id="pending-count">0</span>
+        </button>
+        <button class="mode-btn" id="btn-mode-all" onclick="setMode('all')">
+          📋 Tots els articles
         </button>
       </div>
+      <button class="refresh-btn" onclick="loadData(true)" title="Sincronitzar">
+        <span id="ref-icon">🔄</span>
+      </button>
     </div>
 
-    <div class="filters-bar" id="super-filters">
-      <button class="chip active" data-sup="ALL" onclick="setSuperFilter('ALL')">Tots</button>
-      <button class="chip" data-sup="Mer" onclick="setSuperFilter('Mer')">Mer</button>
-      <button class="chip" data-sup="BA" onclick="setSuperFilter('BA')">BA</button>
-      <button class="chip" data-sup="Plus" onclick="setSuperFilter('Plus')">Plus</button>
-      <button class="chip" data-sup="Al" onclick="setSuperFilter('Al')">Al</button>
-      <button class="chip" data-sup="Li" onclick="setSuperFilter('Li')">Li</button>
-      <button class="chip" data-sup="Esc" onclick="setSuperFilter('Esc')">Esc</button>
-      <button class="chip dte-filter" id="dte-chip" onclick="toggleDteFilter()">🏷️ Dte</button>
+    <div class="filters-bar" id="sup-bar">
+      <button class="chip active" data-sup="ALL" onclick="setSup('ALL')">Tots</button>
+      <button class="chip" data-sup="NONE" onclick="setSup('NONE')">Sense súper</button>
+      <button class="chip" data-sup="Mer" onclick="setSup('Mer')">Mer</button>
+      <button class="chip" data-sup="BA" onclick="setSup('BA')">BA</button>
+      <button class="chip" data-sup="Plus" onclick="setSup('Plus')">Plus</button>
+      <button class="chip" data-sup="Al" onclick="setSup('Al')">Al</button>
+      <button class="chip" data-sup="Li" onclick="setSup('Li')">Li</button>
+      <button class="chip" data-sup="Esc" onclick="setSup('Esc')">Esc</button>
+      <button class="chip dte-chip" id="dte-btn" onclick="toggleDte()">🏷️ Dte</button>
+    </div>
+
+    <div class="search-wrap" id="search-wrap" style="display:none;">
+      <input type="search" id="search" class="search-input" placeholder="Cercar o crear article..." oninput="render()" />
     </div>
   </header>
 
-  <div class="search-box" id="search-container" style="display: none;">
-    <input type="search" id="search-input" class="search-input" placeholder="Cercar producte o afegir-ne un de nou..." oninput="render()" />
-  </div>
+  <main id="list"></main>
 
-  <main id="app-content">
-    <div class="empty-state">Carregant llista...</div>
-  </main>
+  <button class="fab" onclick="openModal()" title="Nou article">+</button>
 
-  <button class="fab" onclick="openAddModal()" title="Afegir article">+</button>
-
-  <nav class="bottom-nav">
-    <button class="nav-btn active" id="tab-buy" onclick="switchTab('buy')">
-      <span class="nav-icon">🛒</span>
-      <span>A comprar</span>
-    </button>
-    <button class="nav-btn" id="tab-catalog" onclick="switchTab('catalog')">
-      <span class="nav-icon">📋</span>
-      <span>Catàleg habitual</span>
-    </button>
-  </nav>
-
-  <!-- Modal Add / Edit -->
-  <div class="modal-backdrop" id="item-modal" onclick="closeModalOnBackdrop(event)">
+  <div class="modal-bg" id="modal-bg" onclick="if(event.target.id==='modal-bg') closeModal()">
     <div class="modal">
       <h2 id="modal-title">Nou article</h2>
-      <input type="hidden" id="edit-id" />
+      <input type="hidden" id="f-id" />
 
-      <div class="form-group">
-        <label>Nom del producte</label>
-        <input type="text" id="field-producte" class="form-control" placeholder="Ex: Llet semidesnatada" />
+      <div class="field">
+        <label>Producte</label>
+        <input type="text" id="f-name" class="input" placeholder="Ex: Llet semidesnatada" />
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Categoria</label>
-          <select id="field-categoria" class="form-control">
-            <option value="Fruita i Verdura">Fruita i Verdura</option>
-            <option value="Carn i Aus">Carn i Aus</option>
-            <option value="Peix i Marisc">Peix i Marisc</option>
-            <option value="Xarcuteria i Formatges">Xarcuteria i Formatges</option>
-            <option value="Làctics i Begudes Vegetals">Làctics i Begudes Vegetals</option>
-            <option value="Forn i Esmorzar">Forn i Esmorzar</option>
-            <option value="Pasta, Arròs i Llegums">Pasta, Arròs i Llegums</option>
-            <option value="Rebost i Conserves">Rebost i Conserves</option>
-            <option value="Salses i Espècies">Salses i Espècies</option>
-            <option value="Begudes">Begudes</option>
-            <option value="Fruits Secs i Aperitius">Fruits Secs i Aperitius</option>
-            <option value="Dolços i Xocolata">Dolços i Xocolata</option>
-            <option value="Congelats i Preparats">Congelats i Preparats</option>
-            <option value="Neteja i Llar">Neteja i Llar</option>
-            <option value="Higiene i Farmàcia">Higiene i Farmàcia</option>
-            <option value="Mascotes">Mascotes</option>
-            <option value="Altres">Altres</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>Supermercat habitual</label>
-          <select id="field-supermercat" class="form-control">
-            <option value="">Qualsevol</option>
+      <div class="grid-2">
+        <div class="field">
+          <label>Supermercat</label>
+          <select id="f-sup" class="select">
+            <option value="">Sense etiqueta</option>
             <option value="Mer">Mer (Mercadona)</option>
             <option value="BA">BA (BonÀrea)</option>
             <option value="Plus">Plus (PlusFresc)</option>
@@ -628,30 +456,52 @@
             <option value="Esc">Esc (Esclat)</option>
           </select>
         </div>
+        <div class="field">
+          <label>Passadís / Categoria</label>
+          <select id="f-cat" class="select">
+            <option value="Fruita i Verdura">Fruita i Verdura</option>
+            <option value="Forn i Esmorzar">Forn i Esmorzar</option>
+            <option value="Carn i Aus">Carn i Aus</option>
+            <option value="Peix i Marisc">Peix i Marisc</option>
+            <option value="Xarcuteria i Formatges">Xarcuteria i Formatges</option>
+            <option value="Làctics i Begudes Vegetals">Làctics i Begudes Vegetals</option>
+            <option value="Pasta, Arròs i Llegums">Pasta, Arròs i Llegums</option>
+            <option value="Rebost i Conserves">Rebost i Conserves</option>
+            <option value="Salses i Espècies">Salses i Espècies</option>
+            <option value="Fruits Secs i Aperitius">Fruits Secs i Aperitius</option>
+            <option value="Dolços i Xocolata">Dolços i Xocolata</option>
+            <option value="Begudes">Begudes</option>
+            <option value="Congelats i Preparats">Congelats i Preparats</option>
+            <option value="Neteja i Llar">Neteja i Llar</option>
+            <option value="Higiene i Farmàcia">Higiene i Farmàcia</option>
+            <option value="Mascotes">Mascotes</option>
+            <option value="Altres">Altres</option>
+          </select>
+        </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
+      <div class="grid-2">
+        <div class="field">
           <label>Quantitat</label>
-          <input type="number" id="field-quantitat" class="form-control" min="1" value="1" />
+          <input type="number" id="f-qty" class="input" min="1" value="1" />
         </div>
-        <div class="form-group" style="display:flex; flex-direction:column; justify-content:flex-end;">
-          <label class="toggle-row" style="margin-bottom:0;">
-            <span>🏷️ Dte (Descompte)</span>
-            <input type="checkbox" id="field-dte" />
+        <div class="field" style="display:flex; align-items:flex-end;">
+          <label class="check-row" style="width:100%; margin-bottom:0;">
+            <span>🏷️ Dte</span>
+            <input type="checkbox" id="f-dte" />
           </label>
         </div>
       </div>
 
-      <label class="toggle-row">
-        <span>🛒 Posar a la llista de compra ara</span>
-        <input type="checkbox" id="field-comprar" checked />
+      <label class="check-row">
+        <span>🛒 A la llista de compra</span>
+        <input type="checkbox" id="f-buy" checked />
       </label>
 
-      <div class="modal-actions">
-        <button type="button" class="btn btn-danger" id="btn-delete" onclick="deleteCurrentItem()" style="display:none;">Esborrar</button>
-        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel·lar</button>
-        <button type="button" class="btn btn-primary" onclick="saveModal()">Desar</button>
+      <div class="modal-btns">
+        <button class="btn btn-del" id="btn-del" onclick="delItem()" style="display:none;">Esborrar</button>
+        <button class="btn btn-cancel" onclick="closeModal()">Cancel·lar</button>
+        <button class="btn btn-save" onclick="saveItem()">Desar</button>
       </div>
     </div>
   </div>
@@ -660,354 +510,253 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbylFLaLHF7kjaCIJ6duBuiafooVQGM4HoL5TUjDDJ-LCfgqYQwUlXMCOyzblj9-dR8q/exec';
 
     let items = [];
-    let currentTab = 'buy'; // 'buy' | 'catalog'
-    let superFilter = 'ALL';
-    let onlyDte = false;
+    let mode = 'buy'; // 'buy' | 'all'
+    let supFilter = 'ALL'; // 'ALL' | 'NONE' | 'Mer' | 'BA' | 'Plus' | 'Al' | 'Li' | 'Esc'
+    let dteFilter = false;
 
-    const CATEGORY_ORDER = [
-      'Fruita i Verdura',
-      'Forn i Esmorzar',
-      'Carn i Aus',
-      'Peix i Marisc',
-      'Xarcuteria i Formatges',
-      'Làctics i Begudes Vegetals',
-      'Pasta, Arròs i Llegums',
-      'Rebost i Conserves',
-      'Salses i Espècies',
-      'Fruits Secs i Aperitius',
-      'Dolços i Xocolata',
-      'Begudes',
-      'Congelats i Preparats',
-      'Neteja i Llar',
-      'Higiene i Farmàcia',
-      'Mascotes',
-      'Altres'
+    const CAT_ORDER = [
+      'Fruita i Verdura', 'Forn i Esmorzar', 'Carn i Aus', 'Peix i Marisc',
+      'Xarcuteria i Formatges', 'Làctics i Begudes Vegetals', 'Pasta, Arròs i Llegums',
+      'Rebost i Conserves', 'Salses i Espècies', 'Fruits Secs i Aperitius',
+      'Dolços i Xocolata', 'Begudes', 'Congelats i Preparats',
+      'Neteja i Llar', 'Higiene i Farmàcia', 'Mascotes', 'Altres'
     ];
 
-    function showToast(msg) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.classList.add('show');
-      clearTimeout(window._toastTimer);
-      window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+    function toast(msg) {
+      const el = document.getElementById('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(window._t);
+      window._t = setTimeout(() => el.classList.remove('show'), 1800);
     }
 
     async function loadData(manual = false) {
-      const icon = document.getElementById('refresh-icon');
-      icon.classList.add('spinning');
+      const ic = document.getElementById('ref-icon');
+      ic.classList.add('spinning');
       try {
         const res = await fetch(API_URL);
-        const json = await res.json();
-        if (json.status === 'ok') {
-          items = json.items;
-          localStorage.setItem('llista_compra_cache', JSON.stringify(items));
+        const data = await res.json();
+        if (data.status === 'ok') {
+          items = data.items;
+          localStorage.setItem('compra_v2', JSON.stringify(items));
           render();
-          if (manual) showToast('Llista actualitzada');
+          if (manual) toast('Actualitzat');
         }
-      } catch (err) {
-        const cached = localStorage.getItem('llista_compra_cache');
-        if (cached && items.length === 0) {
-          items = JSON.parse(cached);
-          render();
-        }
-        showToast('Sense connexió (mostrant còpia local)');
+      } catch (e) {
+        toast('Mode sense connexió');
       } finally {
-        icon.classList.remove('spinning');
+        ic.classList.remove('spinning');
       }
     }
 
-    async function postAction(payload) {
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-      } catch (err) {
-        showToast('Error desant al núvol');
-      }
+    function send(payload) {
+      return fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      }).catch(() => toast('Error desant'));
     }
 
-    function switchTab(tab) {
-      currentTab = tab;
-      document.getElementById('tab-buy').classList.toggle('active', tab === 'buy');
-      document.getElementById('tab-catalog').classList.toggle('active', tab === 'catalog');
-      document.getElementById('header-title').textContent = tab === 'buy' ? '🛒 A comprar' : '📋 Catàleg habitual';
-      document.getElementById('search-container').style.display = tab === 'catalog' ? 'flex' : 'none';
-      if (tab === 'catalog') {
-        document.getElementById('search-input').focus();
-      }
+    function setMode(m) {
+      mode = m;
+      document.getElementById('btn-mode-buy').classList.toggle('active', m === 'buy');
+      document.getElementById('btn-mode-all').classList.toggle('active', m === 'all');
+      document.getElementById('search-wrap').style.display = m === 'all' ? 'block' : 'none';
+      if (m === 'all') document.getElementById('search').focus();
       render();
     }
 
-    function setSuperFilter(sup) {
-      superFilter = sup;
-      document.querySelectorAll('#super-filters .chip[data-sup]').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.sup === sup);
+    function setSup(s) {
+      supFilter = s;
+      document.querySelectorAll('#sup-bar .chip[data-sup]').forEach(b => {
+        b.classList.toggle('active', b.dataset.sup === s);
       });
       render();
     }
 
-    function toggleDteFilter() {
-      onlyDte = !onlyDte;
-      document.getElementById('dte-chip').classList.toggle('active', onlyDte);
+    function toggleDte() {
+      dteFilter = !dteFilter;
+      document.getElementById('dte-btn').classList.toggle('active', dteFilter);
       render();
     }
 
-    function toggleComprar(id) {
-      const item = items.find(x => String(x.id) === String(id));
-      if (!item) return;
-      item.comprar = !item.comprar;
-      if (item.comprar && (!item.quantitat || item.quantitat < 1)) {
-        item.quantitat = 1;
-      }
-      localStorage.setItem('llista_compra_cache', JSON.stringify(items));
+    function toggleBuy(id) {
+      const it = items.find(x => String(x.id) === String(id));
+      if (!it) return;
+      it.comprar = !it.comprar;
+      if (it.comprar && (!it.quantitat || it.quantitat < 1)) it.quantitat = 1;
+      localStorage.setItem('compra_v2', JSON.stringify(items));
       render();
-      showToast(item.comprar ? `+ ${item.producte}` : `✓ ${item.producte} agafat`);
-      postAction({
-        action: 'toggleComprar',
-        id: item.id,
-        comprar: item.comprar,
-        quantitat: item.quantitat
-      });
+      toast(it.comprar ? `+ ${it.producte}` : `✓ ${it.producte}`);
+      send({ action: 'toggleComprar', id: it.id, comprar: it.comprar, quantitat: it.quantitat });
     }
 
-    function changeQty(id, delta, event) {
-      event.stopPropagation();
-      const item = items.find(x => String(x.id) === String(id));
-      if (!item) return;
-      const newQty = (item.quantitat || 1) + delta;
-      if (newQty < 1) {
-        toggleComprar(id);
-        return;
-      }
-      item.quantitat = newQty;
-      localStorage.setItem('llista_compra_cache', JSON.stringify(items));
+    function stepQty(id, d, e) {
+      e.stopPropagation();
+      const it = items.find(x => String(x.id) === String(id));
+      if (!it) return;
+      if (it.quantitat + d < 1) { toggleBuy(id); return; }
+      it.quantitat += d;
+      localStorage.setItem('compra_v2', JSON.stringify(items));
       render();
-      postAction({
-        action: 'updateItem',
-        id: item.id,
-        quantitat: item.quantitat
-      });
+      send({ action: 'updateItem', id: it.id, quantitat: it.quantitat });
     }
 
     function render() {
-      const container = document.getElementById('app-content');
-      const pendingCount = items.filter(x => x.comprar).length;
-      document.getElementById('pending-badge').textContent = pendingCount;
+      const list = document.getElementById('list');
+      document.getElementById('pending-count').textContent = items.filter(x => x.comprar).length;
+      const q = (document.getElementById('search').value || '').trim().toLowerCase();
 
-      const searchTerm = (document.getElementById('search-input').value || '').trim().toLowerCase();
+      const filtered = items.filter(it => {
+        if (mode === 'buy' && !it.comprar) return false;
+        if (dteFilter && !it.dte) return false;
 
-      let filtered = items.filter(item => {
-        if (currentTab === 'buy' && !item.comprar) return false;
-        if (onlyDte && !item.dte) return false;
-        if (superFilter !== 'ALL') {
-          // A la vista "A comprar", mostra els del súper seleccionat + els que no tenen súper específic
-          if (currentTab === 'buy') {
-            if (item.supermercat !== superFilter && item.supermercat !== '') return false;
-          } else {
-            if (item.supermercat !== superFilter) return false;
-          }
+        // Filtre estricte de supermercat
+        if (supFilter === 'NONE') {
+          if (it.supermercat !== '') return false;
+        } else if (supFilter !== 'ALL') {
+          if (it.supermercat !== supFilter) return false;
         }
-        if (currentTab === 'catalog' && searchTerm) {
-          return item.producte.toLowerCase().includes(searchTerm) ||
-                 item.categoria.toLowerCase().includes(searchTerm);
+
+        if (mode === 'all' && q) {
+          return it.producte.toLowerCase().includes(q);
         }
         return true;
       });
 
-      if (filtered.length === 0) {
-        if (currentTab === 'buy') {
-          container.innerHTML = `
-            <div class="empty-state">
-              <div style="font-size:2.4rem;">✅</div>
-              <p>No hi ha res pendent amb aquest filtre.</p>
-              <button class="btn btn-primary" style="max-width:220px;" onclick="switchTab('catalog')">Afegir del catàleg</button>
-            </div>`;
+      if (!filtered.length) {
+        if (mode === 'buy') {
+          list.innerHTML = `<div class="empty">✅ Cap article pendent amb aquest filtre.</div>`;
         } else {
-          const safeQuery = escapeHtml(document.getElementById('search-input').value.trim());
-          container.innerHTML = `
-            <div class="empty-state">
-              <p>No s'ha trobat "${safeQuery}".</p>
-              <button class="btn btn-primary" style="max-width:240px;" onclick="openAddModal('${safeQuery.replace(/'/g, "\\'")}')">+ Crear "${safeQuery}"</button>
-            </div>`;
+          const rawQ = document.getElementById('search').value.trim();
+          list.innerHTML = `<div class="empty">
+            No hi ha cap article "${esc(rawQ)}".<br><br>
+            <button class="btn btn-save" style="max-width:220px;" onclick="openModal(null, '${esc(rawQ).replace(/'/g, "\\'")}')">+ Afegir "${esc(rawQ)}"</button>
+          </div>`;
         }
         return;
       }
 
-      // Agrupa per categoria
+      // Agrupem per passadís/categoria
       const groups = {};
-      filtered.forEach(item => {
-        const cat = item.categoria || 'Altres';
-        if (!groups[cat]) groups[cat] = [];
-        groups[cat].push(item);
+      filtered.forEach(it => {
+        const c = it.categoria || 'Altres';
+        (groups[c] = groups[c] || []).push(it);
       });
 
-      const sortedCats = Object.keys(groups).sort((a, b) => {
-        const ia = CATEGORY_ORDER.indexOf(a);
-        const ib = CATEGORY_ORDER.indexOf(b);
-        if (ia === -1 && ib === -1) return a.localeCompare(b);
-        if (ia === -1) return 1;
-        if (ib === -1) return -1;
-        return ia - ib;
+      const cats = Object.keys(groups).sort((a, b) => {
+        const ia = CAT_ORDER.indexOf(a), ib = CAT_ORDER.indexOf(b);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
       });
 
       let html = '';
-      sortedCats.forEach(cat => {
-        const catItems = groups[cat].sort((a, b) => a.producte.localeCompare(b.producte, 'ca'));
-        html += `<div class="category-group">
-          <div class="category-title">
-            <span>${escapeHtml(cat)}</span>
-            <span>${catItems.length}</span>
-          </div>`;
-
-        catItems.forEach(item => {
-          const isChecked = currentTab === 'catalog' && item.comprar;
-          const cardClass = currentTab === 'catalog' && item.comprar ? 'item-card in-cart checked-style' : 'item-card';
-          const supTag = item.supermercat ? `<span class="tag sup-${escapeHtml(item.supermercat)}">${escapeHtml(item.supermercat)}</span>` : '';
-          const dteTag = item.dte ? `<span class="tag tag-dte">Dte</span>` : '';
+      cats.forEach(cat => {
+        html += `<div class="section-label">${esc(cat)}</div>`;
+        groups[cat].sort((a, b) => a.producte.localeCompare(b.producte, 'ca')).forEach(it => {
+          const isSel = mode === 'all' && it.comprar;
+          const supBadge = it.supermercat ? `<span class="badge sup-${esc(it.supermercat)}">${esc(it.supermercat)}</span>` : '';
+          const dteBadge = it.dte ? `<span class="badge badge-dte">Dte</span>` : '';
 
           html += `
-            <div class="${cardClass}">
-              <div class="item-left" onclick="toggleComprar('${item.id}')">
-                <div class="check-circle">${isChecked ? '✓' : ''}</div>
-                <div class="item-info">
-                  <span class="item-name">${escapeHtml(item.producte)}</span>
-                  ${(supTag || dteTag) ? `<div class="item-tags">${supTag}${dteTag}</div>` : ''}
+            <div class="row ${isSel ? 'selected' : ''}">
+              <div class="row-main" onclick="toggleBuy('${it.id}')">
+                <div class="checkbox">${isSel ? '✓' : ''}</div>
+                <div class="row-title">
+                  ${esc(it.producte)}
+                  ${(supBadge || dteBadge) ? `<span class="badges">${supBadge}${dteBadge}</span>` : ''}
                 </div>
               </div>
-              <div class="item-right">
-                ${item.comprar ? `
-                  <div class="qty-box">
-                    <button class="qty-btn" onclick="changeQty('${item.id}', -1, event)">−</button>
-                    <span class="qty-val">${item.quantitat}</span>
-                    <button class="qty-btn" onclick="changeQty('${item.id}', 1, event)">+</button>
+              <div class="row-actions">
+                ${it.comprar ? `
+                  <div class="qty-pill">
+                    <button onclick="stepQty('${it.id}', -1, event)">−</button>
+                    <span>${it.quantitat}</span>
+                    <button onclick="stepQty('${it.id}', 1, event)">+</button>
                   </div>` : ''}
-                <button class="edit-btn" onclick="openEditModal('${item.id}')" title="Editar">✏️</button>
+                <button class="edit-icon" onclick="openModal('${it.id}')">✏️</button>
               </div>
             </div>`;
         });
-
-        html += `</div>`;
       });
 
-      container.innerHTML = html;
+      list.innerHTML = html;
     }
 
-    function openAddModal(prefillName = '') {
-      document.getElementById('modal-title').textContent = 'Nou article';
-      document.getElementById('edit-id').value = '';
-      document.getElementById('field-producte').value = prefillName;
-      document.getElementById('field-categoria').value = 'Fruita i Verdura';
-      document.getElementById('field-supermercat').value = superFilter !== 'ALL' ? superFilter : '';
-      document.getElementById('field-quantitat').value = 1;
-      document.getElementById('field-dte').checked = onlyDte;
-      document.getElementById('field-comprar').checked = true;
-      document.getElementById('btn-delete').style.display = 'none';
-      document.getElementById('item-modal').classList.add('open');
-      setTimeout(() => document.getElementById('field-producte').focus(), 100);
+    function openModal(id = null, prefill = '') {
+      const it = id ? items.find(x => String(x.id) === String(id)) : null;
+      document.getElementById('modal-title').textContent = it ? 'Editar article' : 'Nou article';
+      document.getElementById('f-id').value = it ? it.id : '';
+      document.getElementById('f-name').value = it ? it.producte : prefill;
+      document.getElementById('f-sup').value = it ? (it.supermercat || '') : (supFilter !== 'ALL' && supFilter !== 'NONE' ? supFilter : '');
+      document.getElementById('f-cat').value = it ? (it.categoria || 'Altres') : 'Fruita i Verdura';
+      document.getElementById('f-qty').value = it ? (it.quantitat || 1) : 1;
+      document.getElementById('f-dte').checked = it ? !!it.dte : dteFilter;
+      document.getElementById('f-buy').checked = it ? !!it.comprar : true;
+      document.getElementById('btn-del').style.display = it ? 'block' : 'none';
+      document.getElementById('modal-bg').classList.add('open');
+      if (!it) setTimeout(() => document.getElementById('f-name').focus(), 80);
     }
 
-    function openEditModal(id) {
-      const item = items.find(x => String(x.id) === String(id));
-      if (!item) return;
-      document.getElementById('modal-title').textContent = 'Editar article';
-      document.getElementById('edit-id').value = item.id;
-      document.getElementById('field-producte').value = item.producte;
-      document.getElementById('field-categoria').value = item.categoria || 'Altres';
-      document.getElementById('field-supermercat').value = item.supermercat || '';
-      document.getElementById('field-quantitat').value = item.quantitat || 1;
-      document.getElementById('field-dte').checked = !!item.dte;
-      document.getElementById('field-comprar').checked = !!item.comprar;
-      document.getElementById('btn-delete').style.display = 'block';
-      document.getElementById('item-modal').classList.add('open');
-    }
+    function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
 
-    function closeModal() {
-      document.getElementById('item-modal').classList.remove('open');
-    }
+    async function saveItem() {
+      const id = document.getElementById('f-id').value;
+      const producte = document.getElementById('f-name').value.trim();
+      if (!producte) return;
 
-    function closeModalOnBackdrop(e) {
-      if (e.target.id === 'item-modal') closeModal();
-    }
-
-    async function saveModal() {
-      const id = document.getElementById('edit-id').value;
-      const producte = document.getElementById('field-producte').value.trim();
-      if (!producte) {
-        showToast('Escriu el nom del producte');
-        return;
-      }
-
-      const payload = {
+      const data = {
         producte,
-        categoria: document.getElementById('field-categoria').value,
-        supermercat: document.getElementById('field-supermercat').value,
-        quantitat: Math.max(1, parseInt(document.getElementById('field-quantitat').value, 10) || 1),
-        dte: document.getElementById('field-dte').checked,
-        comprar: document.getElementById('field-comprar').checked
+        supermercat: document.getElementById('f-sup').value,
+        categoria: document.getElementById('f-cat').value,
+        quantitat: Math.max(1, parseInt(document.getElementById('f-qty').value, 10) || 1),
+        dte: document.getElementById('f-dte').checked,
+        comprar: document.getElementById('f-buy').checked
       };
 
       closeModal();
 
       if (id) {
-        const item = items.find(x => String(x.id) === String(id));
-        if (item) Object.assign(item, payload);
-        localStorage.setItem('llista_compra_cache', JSON.stringify(items));
+        const it = items.find(x => String(x.id) === String(id));
+        if (it) Object.assign(it, data);
+        localStorage.setItem('compra_v2', JSON.stringify(items));
         render();
-        showToast('Article actualitzat');
-        await postAction({ action: 'updateItem', id, ...payload });
+        toast('Desat');
+        await send({ action: 'updateItem', id, ...data });
       } else {
-        const tempId = 'tmp_' + Date.now();
-        const newItem = { id: tempId, ...payload };
-        items.push(newItem);
+        const tmp = { id: 'tmp_' + Date.now(), ...data };
+        items.push(tmp);
         render();
-        showToast('Article afegit');
-        try {
-          const res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'addItem', ...payload })
-          });
+        toast('Afegit');
+        const res = await send({ action: 'addItem', ...data });
+        if (res) {
           const json = await res.json();
-          if (json.id) newItem.id = json.id;
-          localStorage.setItem('llista_compra_cache', JSON.stringify(items));
-        } catch (err) {
-          showToast('Error sincronitzant');
+          if (json.id) tmp.id = json.id;
+          localStorage.setItem('compra_v2', JSON.stringify(items));
         }
       }
     }
 
-    async function deleteCurrentItem() {
-      const id = document.getElementById('edit-id').value;
+    async function delItem() {
+      const id = document.getElementById('f-id').value;
       if (!id) return;
       items = items.filter(x => String(x.id) !== String(id));
-      localStorage.setItem('llista_compra_cache', JSON.stringify(items));
+      localStorage.setItem('compra_v2', JSON.stringify(items));
       closeModal();
       render();
-      showToast('Article eliminat');
-      await postAction({ action: 'deleteItem', id });
+      toast('Esborrat');
+      await send({ action: 'deleteItem', id });
     }
 
-    function escapeHtml(str) {
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+    function esc(s) {
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // Recarrega automàtica quan tornes a obrir l'app des de segon pla
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') loadData(false);
     });
 
-    // Arrencada inicial
-    const cached = localStorage.getItem('llista_compra_cache');
-    if (cached) {
-      items = JSON.parse(cached);
-      render();
-    }
+    const cache = localStorage.getItem('compra_v2');
+    if (cache) { items = JSON.parse(cache); render(); }
     loadData(false);
   </script>
 </body>
